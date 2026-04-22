@@ -71,6 +71,8 @@ func (p *ProxyServer) proxyHTTPS(clientConn *tls.Conn, destConn *tls.Conn, host 
 				outReq.Header.Add(key, value)
 			}
 		}
+		// 移除压缩编码，确保服务端返回明文
+		outReq.Header.Del("Accept-Encoding")
 
 		// Send request to target server
 		outReq.Write(destConn)

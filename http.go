@@ -52,6 +52,8 @@ func (p *ProxyServer) handleHTTP(w http.ResponseWriter, r *http.Request) {
 			req.Header.Add(key, value)
 		}
 	}
+	// 移除压缩编码，确保服务端返回明文
+	req.Header.Del("Accept-Encoding")
 
 	// 发送请求到目标服务器
 	client := &http.Client{}

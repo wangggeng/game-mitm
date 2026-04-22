@@ -35,7 +35,7 @@ func main() {
 	proxy.OnResponse("*").Do(func(body []byte, ctx *gamemitm.ProxyCtx) []byte {
 		fullURL := ctx.Req.Host + ctx.Req.URL.RequestURI()
 		// 只打印匹配的接口
-		if strings.Contains(fullURL, "baidu.com") {
+		if strings.Contains(fullURL, "mtop.yuekeyun.com") {
 			fmt.Println("========== 命中目标接口 ==========")
 			fmt.Printf("URL: https://%s\n", fullURL)
 			fmt.Printf("状态码: %d\n", ctx.Resp.StatusCode)
