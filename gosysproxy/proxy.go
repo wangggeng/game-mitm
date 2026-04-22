@@ -117,13 +117,11 @@ func SetPAC(scriptLoc string) error {
 		{dwOption: _INTERNET_PER_CONN_AUTOCONFIG_URL, value: scriptLocAddr},
 	}
 	param.pOptions = uintptr(unsafe.Pointer(&options[0]))
-	ret, _, infoPtr := syscall.Syscall6(internetSetOption,
-		4,
+	ret, _, infoPtr := syscall.SyscallN(internetSetOption,
 		0,
 		_INTERNET_OPTION_PER_CONNECTION_OPTION,
 		uintptr(unsafe.Pointer(&param)),
-		unsafe.Sizeof(param),
-		0, 0)
+		unsafe.Sizeof(param))
 	// fmt.Printf(">> Ret [%d] Setting options: %s\n", ret, info)
 	if ret != 1 {
 		return errors.New(fmt.Sprintf("%s", infoPtr))
@@ -191,13 +189,11 @@ func SetGlobalProxy(proxyServer string, bypasses ...string) error {
 		{dwOption: _INTERNET_PER_CONN_PROXY_BYPASS, value: bypassAddr},
 	}
 	param.pOptions = uintptr(unsafe.Pointer(&options[0]))
-	ret, _, infoPtr := syscall.Syscall6(internetSetOption,
-		4,
+	ret, _, infoPtr := syscall.SyscallN(internetSetOption,
 		0,
 		_INTERNET_OPTION_PER_CONNECTION_OPTION,
 		uintptr(unsafe.Pointer(&param)),
-		unsafe.Sizeof(param),
-		0, 0)
+		unsafe.Sizeof(param))
 	// fmt.Printf(">> Ret [%d] Setting options: %s\n", ret, infoPtr)
 	if ret != 1 {
 		return errors.New(fmt.Sprintf("%s", infoPtr))
@@ -218,13 +214,11 @@ func Off() error {
 		//value:    _PROXY_TYPE_AUTO_DETECT | _PROXY_TYPE_DIRECT}
 		value: _PROXY_TYPE_DIRECT}
 	param.pOptions = uintptr(unsafe.Pointer(&option))
-	ret, _, infoPtr := syscall.Syscall6(internetSetOption,
-		4,
+	ret, _, infoPtr := syscall.SyscallN(internetSetOption,
 		0,
 		_INTERNET_OPTION_PER_CONNECTION_OPTION,
 		uintptr(unsafe.Pointer(&param)),
-		unsafe.Sizeof(param),
-		0, 0)
+		unsafe.Sizeof(param))
 	// fmt.Printf(">> Ret [%d] Setting options: %s\n", ret, info)
 	if ret != 1 {
 		return errors.New(fmt.Sprintf("%s", infoPtr))
@@ -237,22 +231,18 @@ func Off() error {
 
 // Flush 更新系统配置使生效
 func Flush() error {
-	ret, _, infoPtr := syscall.Syscall6(internetSetOption,
-		4,
+	ret, _, infoPtr := syscall.SyscallN(internetSetOption,
 		0,
 		_INTERNET_OPTION_PROXY_SETTINGS_CHANGED,
-		0, 0,
 		0, 0)
 	// fmt.Println(">> Propagating changes:", fmt.Sprintf("%s", errno))
 	if ret != 1 {
 		return errors.New(fmt.Sprintf("%s", infoPtr))
 	}
 
-	ret, _, infoPtr = syscall.Syscall6(internetSetOption,
-		4,
+	ret, _, infoPtr = syscall.SyscallN(internetSetOption,
 		0,
 		_INTERNET_OPTION_REFRESH,
-		0, 0,
 		0, 0)
 	// fmt.Println(">> Refreshing:", errno)
 	if ret != 1 {
@@ -265,12 +255,10 @@ func Flush() error {
 func Status() (*ProxyStatus, error) {
 	var bufferLength uint32 = 1024 * 10
 	buffer := make([]byte, bufferLength)
-	ret, _, infoPtr := syscall.Syscall6(internetQueryOption,
-		4,
+	ret, _, infoPtr := syscall.SyscallN(internetQueryOption,
 		0,
 		_INTERNET_OPTION_PROXY,
-		uintptr(unsafe.Pointer(&buffer[0])), uintptr(unsafe.Pointer(&bufferLength)),
-		0, 0)
+		uintptr(unsafe.Pointer(&buffer[0])), uintptr(unsafe.Pointer(&bufferLength)))
 	if ret != 1 {
 		return nil, errors.New(fmt.Sprintf("%s", infoPtr))
 	}
