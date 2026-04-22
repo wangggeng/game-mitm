@@ -1,0 +1,3 @@
+*.exe
+ca/ca.crt
+ca/ca.key
